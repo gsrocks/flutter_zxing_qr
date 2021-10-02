@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:flutter_zxing_qr/error_correction_level.dart';
 import 'package:flutter_zxing_qr/flutter_zxing_qr.dart';
 
 void main() {
@@ -15,6 +16,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   String _platformVersion = 'Unknown';
+  List<List<int>>? qrCode;
 
   @override
   void initState() {
@@ -44,6 +46,16 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Future<void> getQr() async {
+    try {
+      qrCode =
+          await FlutterZxingQr.generateQr('123E4567-E898-12D3-A456-4266554406A0', 2, ErrorCorrectionLevel.M);
+      print(qrCode);
+    } on PlatformException {
+      print('PlatformException!');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -52,7 +64,15 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Text('Running on: $_platformVersion\n'),
+          child: Column(
+            children: [
+              Text('Running on: $_platformVersion\n'),
+              ElevatedButton(
+                  onPressed: () => getQr(),
+                  child: Text('Generate QR')
+              )
+            ],
+          )
         ),
       ),
     );
